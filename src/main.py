@@ -14,7 +14,7 @@ load_dotenv()
 
 client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
-# Set up the agent
+# Set up the agent and tool
 
 # Set up Python Tkinter GUI
 
