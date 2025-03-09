@@ -1,25 +1,43 @@
 import os
 from dotenv import load_dotenv
-
-from langchain_community.utilities import GoogleSerperAPIWrapper
-from langchain_openai import OpenAI
-from langchain.agents import initialize_agent, Tool
-from langchain.agents import AgentType
+from langchain import hub
+from langchain_google_community import GoogleSearchAPIWrapper
+from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
+# from langchain_openai import OpenAI
+from langchain.agents import create_structured_chat_agent, AgentExecutor
+from langchain_core.tools import Tool
 
 load_dotenv()
 
-os.environ["SERPER_API_KEY"] = os.getenv("SERPER_API_KEY")
-os.environ['OPENAI_API_KEY'] = os.getenv("OPENAI_API_KEY")
+# os.environ['OPENAI_API_KEY'] = os.getenv("OPENAI_API_KEY")
+os.environ["GOOGLE_CSE_ID"] = os.getenv("GOOGLE_CSE_ID")
+os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
+HUGGINGFACEHUB_API_TOKEN = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
-llm = OpenAI(temperature=0)
-search = GoogleSerperAPIWrapper()
-tools = [
-    Tool(
-        name="Intermediate Answer",
-        func=search.run,
-        description="useful for when you need to ask with search"
-    )
-]
+google_search = GoogleSearchAPIWrapper()
 
-self_ask_with_search = initialize_agent(tools, llm, agent=AgentType.SELF_ASK_WITH_SEARCH, verbose=True)
-self_ask_with_search.run("What is the hometown of the reigning men's U.S. Open champion?")
+google_tool = Tool(
+    name="google-search",
+    description="Search Google for recent results.",
+    func=google_search.run,
+)
+
+llm = HuggingFaceEndpoint(repo_id="HuggingFaceH4/zephyr-7b-beta")
+chat_model = ChatHuggingFace(llm=llm)
+prompt = hub.pull("hwchase17/structured-chat-agent")
+
+agent = create_structured_chat_agent(
+    llm=chat_model,
+    tools=[google_tool],
+    prompt=prompt
+)
+
+agent_executor = AgentExecutor(
+    agent=agent,
+    tools=[google_tool],
+    verbose=True,
+    handle_parsing_errors=True,
+    max_interactions=5
+)
+
+agent_executor.invoke({"input": "When did the movie The Matrix come out?"})
