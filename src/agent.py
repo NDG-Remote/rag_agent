@@ -27,7 +27,12 @@ def top_imdb_result(query):
 
 prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", "You are a helpful assistant to answer questions about movies and TV series. Please provide a brief answer to the question, crawl the content of the IMDB link provided by the tool and add the information about the current IMDb rating to this answer."),
+        ("system", """You are a helpful assistant that provides answers about movies and TV series. Your task is to answer user questions concisely while ensuring that you **always** include the IMDb rating (if available).  
+1. Use the IMDb link provided by the tool to find the IMDb rating.  
+2. If the rating is not found in the provided data, explicitly state: "IMDb rating not available."  
+3. Format your response clearly, including:  
+   - A short answer to the user's question.  
+   - The IMDb rating in this format: **"IMDb Rating: X.X/10"** """),
         ("human", "{input}"),
         ("placeholder", "{agent_scratchpad}"),
     ]
