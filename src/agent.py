@@ -1,15 +1,14 @@
 import os
 from dotenv import load_dotenv
+
 from langchain import hub
 from langchain_google_community import GoogleSearchAPIWrapper
 from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
-# from langchain_openai import OpenAI
 from langchain.agents import create_structured_chat_agent, AgentExecutor
 from langchain_core.tools import Tool
 
 load_dotenv()
 
-# os.environ['OPENAI_API_KEY'] = os.getenv("OPENAI_API_KEY")
 os.environ["GOOGLE_CSE_ID"] = os.getenv("GOOGLE_CSE_ID")
 os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
 HUGGINGFACEHUB_API_TOKEN = os.getenv("HUGGINGFACEHUB_API_TOKEN")
