@@ -38,6 +38,7 @@ chat_display.tag_configure("result_message", foreground="black", background="#AD
 chat_display.tag_configure("calling_message", foreground="black", background="#FFFFE0")  # Light yellow for calling messages
 chat_display.tag_configure("final_result_message", foreground="black", background="#D3D3D3")  # Light grey for final result messages
 chat_display.tag_configure("empty_message", foreground="black", background="white")  # White for default messages
+chat_display.tag_configure("error_message", foreground="black", background="#FF6347")  # Tomato for error messages
 
 title_label = tk.Label(root, text="Ask a question about a movie or TV-Serie:")
 title_label.grid(row=1, column=0, padx=10, pady=10)
