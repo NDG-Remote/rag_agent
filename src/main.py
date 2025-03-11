@@ -1,4 +1,4 @@
-from gui import run_gui, on_click, set_on_click_callback, updating_chat_display
+from gui import run_gui, on_click, set_on_click_callback, updating_chat_display, root
 from agent import get_answer
 from name_filter import extract_name
 from youtube import extract_youtube_link
@@ -18,20 +18,24 @@ def process_user_input(user_input):
     # Sending message to the GUI
     if name:
         updating_chat_display('Calling Google Search for your Question about "' + name + '".', "calling_message")
+        root.update()
 
     # getting answer from the AI to the question
     answer = get_answer(user_input)
     if not answer:
         question_response = ("I'm sorry, I couldn't find any information about the movie/TV-Serie you asked for.")
         updating_chat_display("Result: No information found", "result_message")
+        root.update()
     else:
         if name:
             question_response = answer
             updating_chat_display('Result: ' + question_response, "result_message")
+            root.update()
 
     # Sending message to the GUI
     if name:
         updating_chat_display('Calling YouTube Search for the official trailer of "' + name + '".', "calling_message")
+        root.update()
 
     # Extracting the youtube link from the search result
     if name:
@@ -39,9 +43,11 @@ def process_user_input(user_input):
         if not youtube_link:
             youtube_response = ("Unfortunately I couldn't find the official trailer on Youtube")
             updating_chat_display('Result: No official movie trailer found on Youtube', "result_message")
+            root.update()
         else:
             youtube_response =(f"Here's the YouTube link to the official trailer: {youtube_link}")
             updating_chat_display("Result: Found trailer: " + youtube_link, "result_message")
+            root.update()
     else:
         youtube_response = ""
 
@@ -50,6 +56,7 @@ def process_user_input(user_input):
 
     # Sending message to the GUI
     updating_chat_display(final_response, "final_result_message")
+    root.update()
 
 
 # Set up Python Tkinter GUI
