@@ -17,3 +17,4 @@ __pycache__/
 
 # test files
 test_*
+app.log

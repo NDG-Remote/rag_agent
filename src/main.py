@@ -1,7 +1,13 @@
+import logging
 from gui import run_gui, on_click, set_on_click_callback, updating_chat_display, root
 from agent import get_answer
 from name_filter import extract_name
 from youtube import extract_youtube_link
+
+# Configure logging
+logging.basicConfig(filename='app.log', level=logging.ERROR, 
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 def process_user_input(user_input):
     try:
@@ -14,6 +20,7 @@ def process_user_input(user_input):
                 name = None
         except Exception as e:
             error_message = f"An error occurred while extracting the movie/TV-Serie name: {str(e)}"
+            logger.error(error_message)
             updating_chat_display(error_message, "error_message")
             root.update()
 
@@ -29,6 +36,7 @@ def process_user_input(user_input):
                 root.update()
             except Exception as e:
                 error_message = f"An error occurred while searching for the movie/TV-Serie: {str(e)}"
+                logger.error(error_message)
                 updating_chat_display(error_message, "error_message")
                 root.update()
 
@@ -46,6 +54,7 @@ def process_user_input(user_input):
                     root.update()
         except Exception as e:
             question_response = f"An error occurred while searching for the answer: {str(e)}"
+            logger.error(question_response)
             updating_chat_display(question_response, "error_message")
             root.update()
 
@@ -68,6 +77,7 @@ def process_user_input(user_input):
                     root.update()
             except Exception as e:
                 youtube_response = f"An error occurred while searching for the YouTube link: {str(e)}"
+                logger.error(youtube_response)
                 updating_chat_display(youtube_response, "error_message")
                 root.update()
         else:
@@ -81,6 +91,7 @@ def process_user_input(user_input):
         root.update()
     except Exception as e:
         error_message = f"An error occurred: {str(e)}"
+        logger.error(error_message)
         updating_chat_display(error_message, "error_message")
         root.update()
 
