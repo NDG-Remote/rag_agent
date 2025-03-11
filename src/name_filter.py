@@ -29,6 +29,7 @@ Ensure that:
 - Common variations like 'movie,' 'film,' or 'series' are ignored.
 - If quotes are present, extract only the content inside them.
 - Correct common spelling mistakes in well-known titles.
+- If you can't find the movie or TV series, return an empty string.
 """
 
 # input = input("Ask a question about a TV-Serie or Movie? ")

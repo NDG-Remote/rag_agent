@@ -57,7 +57,7 @@ prompt = ChatPromptTemplate.from_messages(
            - A short, clear answer to the user's question.
            - Followed by the IMDb rating in this exact format: **"IMDb Rating: X.X/10"**
         4. Only respond to questions about movies, TV series, or TV shows.
-           - If the query is unrelated, reply: **"Sorry, I can only provide information about movies, TV series, and TV shows."**
+           - If the query is unrelated, reply: "Sorry, I can only provide information about movies, TV series, and TV shows."
 
         Keep responses concise, factual, and well-formatted.
         """),

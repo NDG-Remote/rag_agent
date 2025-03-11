@@ -5,38 +5,48 @@ from youtube import extract_youtube_link
 
 def process_user_input(user_input):
     # Extracting the movie/TV-Serie name from the user input
-    name = extract_name(user_input)
+    name = extract_name(user_input).strip()
+    invalid_names = ["", "''", '""']
+    if name in invalid_names:
+        name = None
+
+    if name:
+        title_response = f"Here's the answer to your question about the movie/TV-Serie '{name}':\n\n"
+    else:
+        title_response = ""
 
     # Sending message to the GUI
-    updating_chat_display('Calling Google Search for your Question about "' + name + '".')
+    if name:
+        updating_chat_display('Calling Google Search for your Question about "' + name + '".')
 
     # getting answer from the AI to the question
     answer = get_answer(user_input)
     if not answer:
-        question_response = ("I don't know")
+        question_response = ("I'm sorry, I couldn't find any information about the movie/TV-Serie you asked for.")
         updating_chat_display('Result: No information found')
-        #? print(question_response)
     else:
-        question_response = answer
-        updating_chat_display('Result: ' + question_response)
-        #? print(question_response)
+        if name:
+            question_response = answer
+            updating_chat_display('Result: ' + question_response)
 
     # Sending message to the GUI
-    updating_chat_display('Calling YouTube Search for the official trailer of "' + name + '".')
+    if name:
+        updating_chat_display('Calling YouTube Search for the official trailer of "' + name + '".')
 
     # Extracting the youtube link from the search result
-    youtube_link = extract_youtube_link(name)
-    if not youtube_link:
-        youtube_response = ("Unfortunately I couldn't find the official movie trailer on Youtube")
-        updating_chat_display('Result: No official movie trailer found on Youtube')
-        #? print(youtube_response)
+    if name:
+        youtube_link = extract_youtube_link(name)
+        if not youtube_link:
+            youtube_response = ("Unfortunately I couldn't find the official trailer on Youtube")
+            updating_chat_display('Result: No official movie trailer found on Youtube')
+        else:
+            youtube_response =(f"Here's the YouTube link to the official trailer: {youtube_link}")
+            updating_chat_display('Found trailer: ' + youtube_link)
     else:
-        youtube_response =(f"Here's the YouTube link to the official trailer: {youtube_link}")
-        updating_chat_display('Found trailer: ' + youtube_link)
-        #? print(youtube_response)
+        youtube_response = ""
 
     # Combining the answer and the youtube link
-    final_response = (f"Here's the answer to your question about the movie/TV-Serie '{name}':\n\n{answer}\n\n{youtube_response}")
+    final_response = (f"{title_response}{answer}\n\n{youtube_response}\n\n")
 
     # Sending message to the GUI
     updating_chat_display(final_response)
