@@ -17,39 +17,39 @@ def process_user_input(user_input):
 
     # Sending message to the GUI
     if name:
-        updating_chat_display('Calling Google Search for your Question about "' + name + '".')
+        updating_chat_display('Calling Google Search for your Question about "' + name + '".', "calling_message")
 
     # getting answer from the AI to the question
     answer = get_answer(user_input)
     if not answer:
         question_response = ("I'm sorry, I couldn't find any information about the movie/TV-Serie you asked for.")
-        updating_chat_display('Result: No information found')
+        updating_chat_display("Result: No information found", "result_message")
     else:
         if name:
             question_response = answer
-            updating_chat_display('Result: ' + question_response)
+            updating_chat_display('Result: ' + question_response, "result_message")
 
     # Sending message to the GUI
     if name:
-        updating_chat_display('Calling YouTube Search for the official trailer of "' + name + '".')
+        updating_chat_display('Calling YouTube Search for the official trailer of "' + name + '".', "calling_message")
 
     # Extracting the youtube link from the search result
     if name:
         youtube_link = extract_youtube_link(name)
         if not youtube_link:
             youtube_response = ("Unfortunately I couldn't find the official trailer on Youtube")
-            updating_chat_display('Result: No official movie trailer found on Youtube')
+            updating_chat_display('Result: No official movie trailer found on Youtube', "result_message")
         else:
             youtube_response =(f"Here's the YouTube link to the official trailer: {youtube_link}")
-            updating_chat_display('Found trailer: ' + youtube_link)
+            updating_chat_display("Result: Found trailer: " + youtube_link, "result_message")
     else:
         youtube_response = ""
 
     # Combining the answer and the youtube link
-    final_response = (f"{title_response}{answer}\n\n{youtube_response}\n\n")
+    final_response = (f"{title_response}{answer}\n\n{youtube_response}\n")
 
     # Sending message to the GUI
-    updating_chat_display(final_response)
+    updating_chat_display(final_response, "final_result_message")
 
 
 # Set up Python Tkinter GUI
