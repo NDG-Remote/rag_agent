@@ -18,38 +18,58 @@ load_dotenv()
 
 model = ChatOpenAI(model="gpt-4o")
 
-google_search = GoogleSearchAPIWrapper()
-
 def top_imdb_result(query):
-    """Get the top IMDb result for a given query."""
     name = extract_name(query)
     return google_search.results(name, 1)
 
-prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", """You are a helpful assistant that provides answers about movies and TV series. Your task is to answer user questions concisely while ensuring that you **always** include the IMDb rating (if available).  
-1. Use the IMDb link provided by the tool to find the IMDb rating.  
-2. If the rating is not found in the provided data, explicitly state: "IMDb rating not available."  
-3. Format your response clearly, including:  
-   - A short answer to the user's question.  
-   - The IMDb rating in this format: **"IMDb Rating: X.X/10"** """),
-        ("human", "{input}"),
-        ("placeholder", "{agent_scratchpad}"),
-    ]
-)
-
-@tool
 def get_imdb_link(query):
-    """Get the IMDb link for the top result of a given query."""
     results = top_imdb_result(query)
     if results:
         return results[0].get("link", "")
     return ""
 
-tools = [get_imdb_link]
+google_search = GoogleSearchAPIWrapper()
+
+tools = [
+    Tool(
+        name="imdb_link",
+        description="Get the IMDb link URL for further information about the movie or TV series and its IMDb rating.",
+        func=get_imdb_link,
+    ),
+    Tool(
+        name="google_search",
+        description="Search Google for recent results.",
+        func=google_search.run,
+    )
+]
+
+
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", """
+        You are a knowledgeable and concise assistant specializing in providing information about movies and TV series. 
+        Your responses should always include the IMDb rating when available.
+
+        Instructions:
+        1. Use the `imdb_link` tool to fetch the IMDb rating and relevant details.
+        2. If the rating is unavailable, explicitly state: **"IMDb rating not available."**
+        3. Structure your response as follows:
+           - A short, clear answer to the user's question.
+           - Followed by the IMDb rating in this exact format: **"IMDb Rating: X.X/10"**
+        4. Only respond to questions about movies, TV series, or TV shows.
+           - If the query is unrelated, reply: **"Sorry, I can only provide information about movies, TV series, and TV shows."**
+
+        Keep responses concise, factual, and well-formatted.
+        """),
+        ("placeholder", "{chat_history}"),
+        ("human", "{input}"),
+        ("placeholder", "{agent_scratchpad}"),
+    ]
+)
+
 
 agent = create_tool_calling_agent(model, tools, prompt)
-agent_executor = AgentExecutor(agent=agent, tools=tools)
+agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 
 def get_answer(user_input: str) -> str:
     result = agent_executor.invoke({"input": user_input})
