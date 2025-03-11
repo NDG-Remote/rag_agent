@@ -23,6 +23,7 @@ Examples:
 - In which year was the movie Inseption released? → 'Inception'
 - What is the Spanish title of the movie 'Die Hard'? → 'Die Hard'
 - How many movies does the series Fast and the Furious have? → 'The Fast and the Furious'.
+- When does the movie A Big Bold Beautiful Journey come out? → 'A Big Bold Beautiful Journey'
 
 Ensure that:
 - The extracted title is formatted correctly.
@@ -31,8 +32,6 @@ Ensure that:
 - Correct common spelling mistakes in well-known titles.
 - If you can't find the movie or TV series, return an empty string.
 """
-
-# input = input("Ask a question about a TV-Serie or Movie? ")
 
 def extract_name(question: str) -> str:
     chat_completion = client.chat.completions.create(
