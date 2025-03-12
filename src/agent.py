@@ -2,8 +2,6 @@ import os
 import json
 from dotenv import load_dotenv
 
-from name_filter import extract_name
-
 from langchain import hub
 from langchain_google_community import GoogleSearchAPIWrapper
 from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
@@ -13,6 +11,9 @@ from langchain_core.prompts import ChatPromptTemplate
 
 from openai import OpenAI
 from langchain_openai import ChatOpenAI
+
+from name_filter import extract_name
+from gui import updating_chat_display, root
 
 load_dotenv()
 
@@ -24,11 +25,18 @@ def top_imdb_result(query):
 
 def get_imdb_link(query):
     results = top_imdb_result(query)
+    updating_chat_display('Calling IMDB Link Search for "' + query + '".', "calling_message")
+    root.update()
     if results:
         return results[0].get("link", "")
     return ""
 
 google_search = GoogleSearchAPIWrapper()
+
+def calling_google_search(query):
+    updating_chat_display('Calling Google Search for "' + query + '".', "calling_message")
+    root.update()
+    return google_search.run
 
 tools = [
     Tool(
@@ -39,7 +47,7 @@ tools = [
     Tool(
         name="google_search",
         description="Search Google for recent results.",
-        func=google_search.run,
+        func=calling_google_search,
     ),
     Tool(
         name="extract_name",
@@ -88,6 +96,6 @@ prompt = ChatPromptTemplate.from_messages(
 agent = create_tool_calling_agent(model, tools, prompt)
 agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 
-def get_answer(user_input: str) -> str:
+def invoke_agent(user_input: str) -> str:
     result = agent_executor.invoke({"input": user_input})
     return result.get("output", "")

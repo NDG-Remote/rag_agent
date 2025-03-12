@@ -1,11 +1,11 @@
 import logging
 from gui import run_gui, on_click, set_on_click_callback, updating_chat_display, root
-from agent import get_answer
+from agent import invoke_agent
 from name_filter import extract_name
 from youtube import extract_youtube_link
 
 # Configure logging
-logging.basicConfig(filename='app.log', level=logging.ERROR, 
+logging.basicConfig(filename='app.log', level=logging.ERROR,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -14,6 +14,7 @@ def process_user_input(user_input):
         # Extracting the movie/TV-Serie name from the user input
         name = None
         try:
+            updating_chat_display("Calling Name Extraction for the movie/TV-Serie.", "calling_message")
             name = extract_name(user_input).strip()
             invalid_names = ["", "''", '""']
             if name in invalid_names:
@@ -24,25 +25,25 @@ def process_user_input(user_input):
             updating_chat_display(error_message, "error_message")
             root.update()
 
+        # Getting the title response and updating the GUI
         if name:
             title_response = f"Here's the answer to your question about the movie/TV-Serie '{name}':\n\n"
-        else:
-            title_response = ""
-
-        # Sending message to the GUI
-        if name:
             try:
-                updating_chat_display('Calling Google Search for your Question about "' + name + '".', "calling_message")
+                updating_chat_display('Result: Movie/TV-Serie is "' + name + '".', "result_message")
                 root.update()
             except Exception as e:
-                error_message = f"An error occurred while searching for the movie/TV-Serie: {str(e)}"
+                error_message = f"An error occurred while updating the display for showing the movie/TV-Serie: {str(e)}"
                 logger.error(error_message)
                 updating_chat_display(error_message, "error_message")
                 root.update()
+        else:
+            title_response = ""
 
-        # getting answer from the AI to the question
+
+        # Getting answer from the AI to the question
         try:
-            answer = get_answer(user_input)
+            updating_chat_display("Calling: LLM for answer", "calling_message")
+            answer = invoke_agent(user_input)
             if not answer:
                 question_response = ("I'm sorry, I couldn't find any information about the movie/TV-Serie you asked for.")
                 updating_chat_display("Result: No information found", "result_message")
@@ -58,14 +59,12 @@ def process_user_input(user_input):
             updating_chat_display(question_response, "error_message")
             root.update()
 
-        # Sending message to the GUI
-        if name:
-            updating_chat_display('Calling YouTube Search for the official trailer of "' + name + '".', "calling_message")
-            root.update()
 
-        # Extracting the youtube link from the search result
+        # Extracting the youtube link from the search result and updating the GUI
         if name:
             try:
+                updating_chat_display('Calling YouTube Search for the official trailer of "' + name + '".', "calling_message")
+                root.update()
                 youtube_link = extract_youtube_link(name)
                 if not youtube_link:
                     youtube_response = ("Unfortunately I couldn't find the official trailer on Youtube")
@@ -83,7 +82,7 @@ def process_user_input(user_input):
         else:
             youtube_response = ""
 
-        # Combining the answer and the youtube link
+        # Combining the answer and the YouTube link
         final_response = (f"{title_response}{answer}\n\n{youtube_response}\n")
 
         # Sending message to the GUI
