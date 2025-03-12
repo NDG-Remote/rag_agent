@@ -1,6 +1,6 @@
 import logging
 from gui import run_gui, on_click, set_on_click_callback, updating_chat_display, root
-from agent import invoke_agent
+from agent import run_agent
 from name_filter import extract_name
 from youtube import extract_youtube_link
 
@@ -29,7 +29,7 @@ def process_user_input(user_input):
         if name:
             title_response = f"Here's the answer to your question about the movie/TV series \"{name}\":\n\n"
             try:
-                updating_chat_display("Result: Movie/TV series is " + name + ".", "result_message")
+                updating_chat_display("Result: Movie/TV series is \"" + name + "\".", "result_message")
                 root.update()
             except Exception as e:
                 error_message = f"An error occurred while updating the display for showing the movie/TV series: {str(e)}"
@@ -40,9 +40,10 @@ def process_user_input(user_input):
             title_response = ""
 
         # Getting answer from the AI to the question
+        answer = None
         try:
-            updating_chat_display("Calling: LLM for answer", "calling_message")
-            answer = invoke_agent(user_input)
+            updating_chat_display("Calling: LLM to answer your question", "calling_message")
+            answer = run_agent(user_input, name)
             if not answer:
                 question_response = "I'm sorry, I couldn't find any information about the movie/TV series you asked for."
                 updating_chat_display("Result: No information found", "result_message")
@@ -62,7 +63,7 @@ def process_user_input(user_input):
         if name:
             youtube_link = None
             try:
-                updating_chat_display("Calling YouTube Search for the official trailer of " + name + ".", "calling_message")
+                updating_chat_display("Calling YouTube Search for the official trailer of \"" + name + "\".", "calling_message")
                 root.update()
                 youtube_link = extract_youtube_link(name).strip("[]'")
                 if not youtube_link:
@@ -70,7 +71,7 @@ def process_user_input(user_input):
                     updating_chat_display("Result: No official movie trailer found on YouTube", "result_message")
                     root.update()
                 else:
-                    youtube_response = "Here's the YouTube link to the official trailer:\n"
+                    youtube_response = "Here's the YouTube link to the official trailer:"
                     updating_chat_display("Result: Found trailer: " + youtube_link, "result_message")
                     root.update()
             except Exception as e:
@@ -80,6 +81,7 @@ def process_user_input(user_input):
                 root.update()
         else:
             youtube_response = ""
+            youtube_link = None
 
         # Combining the answer and the YouTube link
         final_response = f"{title_response}{answer}\n\n{youtube_response}"

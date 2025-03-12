@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+import re
 
 import requests
 
@@ -30,7 +31,8 @@ Ensure that:
 - Common variations like 'movie,' 'film,' or 'series' are ignored.
 - If quotes are present, extract only the content inside them.
 - Correct common spelling mistakes in well-known titles.
-- If you can't find the movie or TV series, return an empty string.
+- If you can't find the movie or TV series, take the subject of the sentence. Example: How many Oscars did the movie Anora win? → 'Anora'
+- If you can't find any possible subject for a movie or tv-serie, return an empty string.
 """
 
 def extract_name(question: str) -> str:
@@ -41,4 +43,6 @@ def extract_name(question: str) -> str:
         ],
         model="gpt-4o"
     )
-    return chat_completion.choices[0].message.content
+    response = chat_completion.choices[0].message.content.strip()
+    response = response.strip("'").strip('"')
+    return response

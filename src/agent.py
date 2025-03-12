@@ -12,88 +12,83 @@ from langchain_core.prompts import ChatPromptTemplate
 from openai import OpenAI
 from langchain_openai import ChatOpenAI
 
-from name_filter import extract_name
 from gui import updating_chat_display, root
+from imdb_api import get_imdb_api_data
 
 load_dotenv()
 
 model = ChatOpenAI(model="gpt-4o")
 
-def top_imdb_result(query):
-    name = extract_name(query)
-    return google_search.results(name, 1)
+def run_agent(user_input, name):
+    def fetch_imdb_api_data(name):
+        updating_chat_display("Calling IMDb API for the movie/TV series.", "calling_message")
+        root.update()
+        return get_imdb_api_data(name)
 
-def get_imdb_link(query):
-    results = top_imdb_result(query)
-    updating_chat_display("Calling IMDb Link Search for \"" + query + "\".", "calling_message")
-    root.update()
-    if results:
-        return results[0].get("link", "")
-    return ""
+    google_search = GoogleSearchAPIWrapper()
 
-google_search = GoogleSearchAPIWrapper()
+    def calling_google_search(query):
+        updating_chat_display("Calling Google Search for \"" + query + "\".", "calling_message")
+        root.update()
+        return google_search.run
 
-def calling_google_search(query):
-    updating_chat_display("Calling Google Search for \"" + query + "\".", "calling_message")
-    root.update()
-    return google_search.run
+    tools = [
+        Tool(
+            name="imdb_data",
+            description="Get the data in a dictionary of the queried movie or tv-show.",
+            func=fetch_imdb_api_data,
+        ),
+        Tool(
+            name="google_search",
+            description="Search Google for recent results.",
+            func=calling_google_search,
+        )
+    ]
 
-tools = [
-    Tool(
-        name="imdb_link",
-        description="Get the IMDb link URL for further information about the movie or TV series and its IMDb rating.",
-        func=get_imdb_link,
-    ),
-    Tool(
-        name="google_search",
-        description="Search Google for recent results.",
-        func=calling_google_search,
-    ),
-    Tool(
-        name="extract_name",
-        description="Extract the name of the movie or TV series from the given question.",
-        func=extract_name,
-    )
-]
-
-prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", """
-        You are an AI assistant that provides accurate and concise information about movies and TV series. 
-        Your primary role is to answer user queries using available knowledge and tools.
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", """
+        You are an AI assistant specializing in providing accurate and concise information about movies and TV series.
 
         **Instructions:**
-        1. **Ensure Relevance**: 
-           - Extract the movie or TV show name using the `extract_name` tool.
-           - If a valid name is found, proceed.
-           - Otherwise, respond: "Sorry, I only provide information about specific movies or TV series."
+        1. **Always Retrieve IMDb Data First:**
+           - Always call the `imdb_data` tool to fetch details before answering.
+           - Extract only the IMDb rating and release date.
+           - Always include the IMDb rating, if available, in this format in the last sentence of the answer.
+           - If the release date is available, include it naturally in your response.
+           - If there is no IMDb data, respond using your training data.
 
-        2. **Fetch IMDb Details**:
-           - Use the `imdb_link` tool to retrieve IMDb ratings.
-           - If a rating is found, format it as: **"IMDb Rating: X.X/10"**.
-           - If unavailable, explicitly state: **"IMDb rating not available."**
+        2. **Use Google Search When Necessary:**
+           - If IMDb data is insufficient to answer the question fully, call the `google_search` tool.
+           - Make sure that, if the question is about a recent movie or TV show, use `google_search` to ensure up-to-date information.
+           - Make sure that, if your training data does not contain the answer, use `google_search` to find relevant results.
+           - Clearly indicate when information is sourced from Google: **"(Source: Google Search)"**.
 
-        3. **Use Google Search When Necessary**:
-           - If your training data does not contain enough information to answer the question, use the `google_search` tool.
-           - This is especially important for recent movies or TV shows that may not be included in your knowledge.
+        3. **Response Format:**
+           - Answer the question concisely.
+           - Always include the IMDb rating and release date when available.
+           - Only provide extra details (budget, runtime, genres, etc.) if explicitly asked.
+           - Keep responses well-structured and conversational.
 
-        4. **Response Format**:
-           - Start with a short, relevant answer to the query.
-           - Include IMDb rating when applicable.
-           - If information was retrieved via Google Search, mention: **"(Source: Google Search)"**.
-           - Keep responses brief and well-structured.
+        **Important Rules:**
+        - Always call the `imdb_data` tool first.
+        - Only use `google_search` if IMDb data is missing or outdated.
+        - If IMDb data is available, assume the question is about a movie or TV series.
+        - If you cannot find an answer, respond politely without making up information.
 
-        Only answer questions related to movies and TV series.
+        Only answer questions related to movies and TV series. If you can't give an answer, say so politely.
         """),
-        ("placeholder", "{chat_history}"),
-        ("human", "{input}"),
-        ("placeholder", "{agent_scratchpad}"),
-    ]
-)
+            ("placeholder", "{chat_history}"),
+            ("human", "{input}"),
+            ("placeholder", "{agent_scratchpad}"),
+        ]
+    )
 
-agent = create_tool_calling_agent(model, tools, prompt)
-agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+    agent = create_tool_calling_agent(model, tools, prompt)
+    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 
-def invoke_agent(user_input: str) -> str:
-    result = agent_executor.invoke({"input": user_input})
-    return result.get("output", "")
+    def invoke_agent(user_input: str) -> str:
+        result = agent_executor.invoke({"input": user_input})
+        return result.get("output", "")
+
+    return invoke_agent(user_input)
