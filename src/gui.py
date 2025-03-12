@@ -40,12 +40,12 @@ chat_display.tag_configure("final_result_message", foreground="black", backgroun
 chat_display.tag_configure("empty_message", foreground="black", background="white")  # White for default messages
 chat_display.tag_configure("error_message", foreground="black", background="#FF6347")  # Tomato for error messages
 
-title_label = tk.Label(root, text="Ask a question about a movie or TV-Serie:")
+title_label = tk.Label(root, text="Ask a question about a movie or TV series:")
 title_label.grid(row=1, column=0, padx=10, pady=10)
 
 entry = tk.Entry(root, width=50, relief="solid", borderwidth=1)
 entry.grid(row=2, column=0, padx=10, pady=10)
-entry.bind('<Return>', on_click)
+entry.bind("<Return>", on_click)
 
 btn = tk.Button(root, text="Send", command=on_click, relief="raised")
 btn.grid(row=3, column=0, padx=10, pady=10)

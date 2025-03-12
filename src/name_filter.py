@@ -22,7 +22,7 @@ Examples:
 - How many chapters does the second season of Game of Thrones have? → 'Game of Thrones'
 - In which year was the movie Inseption released? → 'Inception'
 - What is the Spanish title of the movie 'Die Hard'? → 'Die Hard'
-- How many movies does the series Fast and the Furious have? → 'The Fast and the Furious'.
+- How many movies does the series fast and the furious have? → 'The Fast and the Furious'.
 - When does the movie A Big Bold Beautiful Journey come out? → 'A Big Bold Beautiful Journey'
 
 Ensure that:

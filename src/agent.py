@@ -25,7 +25,7 @@ def top_imdb_result(query):
 
 def get_imdb_link(query):
     results = top_imdb_result(query)
-    updating_chat_display('Calling IMDB Link Search for "' + query + '".', "calling_message")
+    updating_chat_display("Calling IMDb Link Search for \"" + query + "\".", "calling_message")
     root.update()
     if results:
         return results[0].get("link", "")
@@ -34,7 +34,7 @@ def get_imdb_link(query):
 google_search = GoogleSearchAPIWrapper()
 
 def calling_google_search(query):
-    updating_chat_display('Calling Google Search for "' + query + '".', "calling_message")
+    updating_chat_display("Calling Google Search for \"" + query + "\".", "calling_message")
     root.update()
     return google_search.run
 
@@ -55,7 +55,6 @@ tools = [
         func=extract_name,
     )
 ]
-
 
 prompt = ChatPromptTemplate.from_messages(
     [
@@ -91,7 +90,6 @@ prompt = ChatPromptTemplate.from_messages(
         ("placeholder", "{agent_scratchpad}"),
     ]
 )
-
 
 agent = create_tool_calling_agent(model, tools, prompt)
 agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
