@@ -30,7 +30,7 @@ def run_agent(user_input, name):
     def calling_google_search(query):
         updating_chat_display("Calling Google Search for \"" + query + "\".", "calling_message")
         root.update()
-        return google_search.run
+        return google_search.run(query)
 
     tools = [
         Tool(
