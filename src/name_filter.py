@@ -13,8 +13,8 @@ load_dotenv()
 
 client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
-prompt = """Extract the name of the movie or TV series from the given question. 
-The output should be a string containing only the title, with proper capitalization and no extra words. 
+prompt = """Extract the name of the movie or TV series from the given question.
+The output should be a string containing only the title, with proper capitalization and no extra words.
 Examples:
 - What do you know about the movie Matrix? → 'The Matrix'
 - In Pretty Woman, who is the protagonist? → 'Pretty Woman'
@@ -42,8 +42,3 @@ def extract_name(question: str) -> str:
         model="gpt-4o"
     )
     return chat_completion.choices[0].message.content
-
-if __name__ == "__main__":
-    user_input = input("Ask a question about a TV-Series or Movie? ")
-    name = extract_name(user_input)
-    print(name)
