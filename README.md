@@ -26,4 +26,4 @@ The RAC Agent is a Tkinter-based GUI application that allows users to ask questi
 
 ## Getting Started
 
-For setup instructions, refer to the [setup.md](../docs/setup.md) file.
+For setup instructions, refer to the [setup.md](../main/docs/setup.md) file.

@@ -1,6 +1,19 @@
-# Project Architecture
+# Project Architecture and basic Documentation
 
-This document provides a brief overview of the main purpose of each `.py` file in the project.
+
+
+## Color Code in Tkinter GUI
+
+The RAC Agent displays every tool call on the GUI with specific color codes:
+
+- **Callings:** Yellow
+- **Results:** Blue
+- **Final Results:** Grey
+- **Errors:** Red
+
+The exception handling ensures that errors are not only displayed in the Tkinter GUI but also logged in a logger file.
+
+---
 
 ## Files
 ### `main.py`
