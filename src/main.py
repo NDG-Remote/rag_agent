@@ -60,16 +60,17 @@ def process_user_input(user_input):
 
         # Extracting the YouTube link from the search result and updating the GUI
         if name:
+            youtube_link = None
             try:
                 updating_chat_display("Calling YouTube Search for the official trailer of " + name + ".", "calling_message")
                 root.update()
-                youtube_link = extract_youtube_link(name)
+                youtube_link = extract_youtube_link(name).strip("[]'")
                 if not youtube_link:
                     youtube_response = "Unfortunately, I couldn't find the official trailer on YouTube."
                     updating_chat_display("Result: No official movie trailer found on YouTube", "result_message")
                     root.update()
                 else:
-                    youtube_response = f"Here's the YouTube link to the official trailer: {youtube_link}"
+                    youtube_response = "Here's the YouTube link to the official trailer:\n"
                     updating_chat_display("Result: Found trailer: " + youtube_link, "result_message")
                     root.update()
             except Exception as e:
@@ -81,10 +82,12 @@ def process_user_input(user_input):
             youtube_response = ""
 
         # Combining the answer and the YouTube link
-        final_response = f"{title_response}{answer}\n\n{youtube_response}\n"
+        final_response = f"{title_response}{answer}\n\n{youtube_response}"
 
         # Sending message to the GUI
         updating_chat_display(final_response, "final_result_message")
+        if youtube_link:
+            updating_chat_display(youtube_link, "link")
         root.update()
     except Exception as e:
         error_message = f"An error occurred: {str(e)}"

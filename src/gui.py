@@ -1,4 +1,5 @@
 import tkinter as tk
+import webbrowser
 
 root = tk.Tk()
 root.title("AI Movie Research Assistant")
@@ -25,6 +26,9 @@ def on_click(event=None):
             callback_function(user_input)
         root.update()
 
+def open_link(event):
+    webbrowser.open(event.widget.get("current linestart", "current lineend"))
+
 def updating_chat_display(response_text, message_type="empty_message"):
     chat_display.config(state=tk.NORMAL)
     chat_display.insert(tk.END, "\n" + response_text + "\n\n", message_type)
@@ -39,6 +43,10 @@ chat_display.tag_configure("calling_message", foreground="black", background="#F
 chat_display.tag_configure("final_result_message", foreground="black", background="#D3D3D3")  # Light grey for final result messages
 chat_display.tag_configure("empty_message", foreground="black", background="white")  # White for default messages
 chat_display.tag_configure("error_message", foreground="black", background="#FF6347")  # Tomato for error messages
+chat_display.tag_configure("link", foreground="blue", underline=True, background="#D3D3D3")  # Style for clickable links
+
+# Bind the tag to the callback function
+chat_display.tag_bind("link", "<Button-1>", open_link)
 
 title_label = tk.Label(root, text="Ask a question about a movie or TV series:")
 title_label.grid(row=1, column=0, padx=10, pady=10)
