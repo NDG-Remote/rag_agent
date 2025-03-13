@@ -4,7 +4,7 @@
 
 ## Color Code in Tkinter GUI
 
-The RAC Agent displays every tool call on the GUI with specific color codes:
+The RAG Agent displays every tool call on the GUI with specific color codes:
 
 - **Callings:** Yellow
 - **Results:** Blue

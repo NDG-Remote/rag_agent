@@ -1,8 +1,8 @@
-# RAC Agent
+# RAG Agent
 
 ## Overview
 
-The RAC Agent is a Tkinter-based GUI application that allows users to ask questions about movies and TV series. The AI behind the chat not only uses its training data but also fetches additional information from IMDB and Google Search. Additionally, it provides a YouTube link to the official trailer.
+The RAG Agent is a Tkinter-based GUI application that allows users to ask questions about movies and TV series. The AI behind the chat not only uses its training data but also fetches additional information from IMDB and Google Search. Additionally, it provides a YouTube link to the official trailer.
 
 ## Core Functionality
 
@@ -10,7 +10,7 @@ The RAC Agent is a Tkinter-based GUI application that allows users to ask questi
 - **AI Responses:** The AI answers questions using its training data and additional data fetched from IMDB and Google Search.
 - **YouTube Links:** Provides links to official trailers.
 
-## RAC Functionality
+## RAG Functionality
 
 - **Reliable Data:** The LLM uses reliable data from the IMDB database.
 - **Google Search:** For very current questions or those not covered by training data, the LLM performs a Google search.
