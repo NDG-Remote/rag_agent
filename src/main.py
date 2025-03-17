@@ -39,10 +39,10 @@ def process_user_input(user_input):
         else:
             title_response = ""
 
-        # Getting answer from the AI to the question
+        # Getting LLM answer from the Agent to the question
         answer = None
         try:
-            updating_chat_display("Calling: LLM to answer your question", "calling_message")
+            updating_chat_display("Calling: Agent to answer your question", "calling_message")
             answer = run_agent(user_input, name)
             if not answer:
                 question_response = "I'm sorry, I couldn't find any information about the movie/TV series you asked for."
@@ -63,7 +63,7 @@ def process_user_input(user_input):
         if name:
             youtube_link = None
             try:
-                updating_chat_display("Calling YouTube Search for the official trailer of \"" + name + "\".", "calling_message")
+                updating_chat_display("Calling: YouTube Search for the official trailer of \"" + name + "\".", "calling_message")
                 root.update()
                 youtube_link = extract_youtube_link(name).strip("[]'")
                 if not youtube_link:
@@ -83,10 +83,10 @@ def process_user_input(user_input):
             youtube_response = ""
             youtube_link = None
 
-        # Combining the answer and the YouTube link
+        # Writing final result, combining the LLM answer and the YouTube link
         final_response = f"{title_response}{answer}\n\n{youtube_response}"
 
-        # Sending message to the GUI
+        # Sending final result to the GUI
         updating_chat_display(final_response, "final_result_message")
         if youtube_link:
             updating_chat_display(youtube_link, "link")

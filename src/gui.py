@@ -45,7 +45,6 @@ chat_display.tag_configure("empty_message", foreground="black", background="whit
 chat_display.tag_configure("error_message", foreground="black", background="#FF6347")  # Tomato for error messages
 chat_display.tag_configure("link", foreground="blue", underline=True, background="#D3D3D3")  # Style for clickable links
 
-# Bind the tag to the callback function
 chat_display.tag_bind("link", "<Button-1>", open_link)
 
 title_label = tk.Label(root, text="Ask a question about a movie or TV series:")

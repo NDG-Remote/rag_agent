@@ -21,7 +21,7 @@ model = ChatOpenAI(model="gpt-4o")
 
 def run_agent(user_input, name):
     def fetch_imdb_api_data(name):
-        updating_chat_display("Calling IMDb API for the movie/TV series.", "calling_message")
+        updating_chat_display("Calling: IMDb API for the movie/TV series.", "calling_message")
         root.update()
         return get_imdb_api_data(name)
 
